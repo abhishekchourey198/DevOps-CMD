@@ -25,4 +25,91 @@ then how to run container from image
 docker run imagename:tag
 docker run -d -p 8000:8000 node-app:latest  - for application  
 
+-----------------------------------------------------------------------
+how to push image on dockerhub 
+docker tag imagename:tag usernme/imgename:tag
+docker push usrnme/imagenme:tag 
+docker system prune - for free space nd dlt the stop container 
+docker rmi imgId - for remove imge
+docker volume ls -to see volume
+docker create volume --name volumename --opt type=none --opt device=path --opt o=bind  - create for create volume
+docker pairing  for two container connect with with docker network two tier app
+docker exec -it containerId bash   - how to open mysql in docker container
+mysql -u root -p   -then give password 
+create network to connect two container - docker network create -d bridge two-tier-app-nw
+docker network ls   - to see network
+docker inspect two-tier-app-nw  - to see both  container are connectted or not
+docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=test@123 -e MYSQL_DATABASE=testdb -e MYSQL_USER=admin -e MYSQL_PASSWORD=admin --name mysql --network two-tier-app-nw  mysql:latest  - for database
+docker run -d -p 5000:5000 -e MYSQL_HOST=mysql -e MYSQL_USER=admin -e MYSQL_PASSWORD=admin -e MYSQL_DB=testdb --name flask-app --network two-tier-app-nw flask-app:latest  - for applic
+
+
+/home/ubuntu/project/volrumes/django-app
+
+---------------------------------------------------------------------------------------------------
+Jenkins Command
+Command for jenkins ubuntu machine
+How to install jenkins on your machine->
+1st install java on machine->
+
+sudo apt update
+sudo apt install fontconfig openjdk-17-jre
+java -version
+
+2nd install jenkins->
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+
+check running or not - systemctl status jenkins
+
+how to write pipeline script->
+pipeline {
+    agent { label "dev-server"}
+    
+    stages {
+        
+        stage("code"){
+            steps{
+                git url: "https://github.com/LondheShubham153/node-todo-cicd.git", branch: "master"
+                echo 'bhaiyya code clone ho gaya'
+            }
+        }
+        stage("build and test"){
+            steps{
+                sh "docker build -t node-app-test-new ."
+                echo 'code build bhi ho gaya'
+            }
+        }
+        stage("scan image"){
+            steps{
+                echo 'image scanning ho gayi'
+            }
+        }
+        stage("push"){
+            steps{
+                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                sh "docker tag node-app-test-new:latest ${env.dockerHubUser}/node-app-test-new:latest"
+                sh "docker push ${env.dockerHubUser}/node-app-test-new:latest"
+                echo 'image push ho gaya'
+                }
+            }
+        }
+        stage("deploy"){
+            steps{
+                sh "docker-compose down && docker-compose up -d"
+                echo 'deployment ho gayi'
+            }
+        }
+    }
+}
+
+----------------------------------------------------------------------------------------------------------------
+
+
 
