@@ -1,0 +1,28 @@
+Docker usefull command-
+Docker-Vertualization,lightweight,resuability
+
+sudo apt update
+sudo apt install docker.io
+systemctl status docker  
+sudo cat /etc/group - for seeing list of group
+sudo usermod -aG docker ubuntu - for adding current user in group
+docker ps - to see how many container is there
+docker reboot
+
+
+file>image>contanier 
+iamge comes from hub/repo then u can create container
+docker pull where is it coming from dockerhub
+docker images - to see how many images are there
+docker run imagename:tag 
+then u need to set env variable psw 
+docker run -e MYSQL_ROOT_PASSWORD=test@123 mysql:latest
+docker run -d -e MYSQL_ROOT_PASSWORD=test@123 mysql:latest  - it will run background
+
+docker kill containerId
+docker build -t imagename:tag .
+then how to run container from image 
+docker run imagename:tag
+docker run -d -p 8000:8000 node-app:latest  - for application  
+
+

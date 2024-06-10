@@ -1,0 +1,57 @@
+Kubernates minikube -> 
+cmd for install kubectl on ubuntu -> curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
+
+cmd for minikube -> curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+
+
+Linux--> find ~/ -name filename for searching file 
+find ~/ -name *.filename 
+
+eksctl install cmd-> curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin 
+eksctl version
+
+kubectl install->  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+validate kubectl-> 
+
+create cluster cmd-> eksctl create cluster --name tws-cluster --region us-west-2 --node-type t2.micro --nodes-min 2 --nodes-max 3
+
+
+appspec.yml forr devops project code commit->
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html
+hooks:
+  AfterInstall:
+    - location: scripts/install_nginx.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_nginx.sh
+      timeout: 300
+      runas: root
+
+
+buildspec.yml ->
+
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing NGINX
+      - sudo apt-get update
+      - sudo apt-get install nginx -y
+  build:
+    commands:
+      - echo Build started on `date`
+      - cp index.html /var/www/html/
+  post_build:
+    commands:
+      - echo Configuring NGINX
+
+artifacts:
+  files:
+    - '**/*'
